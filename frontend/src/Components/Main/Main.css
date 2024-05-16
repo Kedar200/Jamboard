@@ -1,7 +1,17 @@
+/* Main.css */
+
 .main {
     background-color: #f1f3f4;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .canvas-container {
