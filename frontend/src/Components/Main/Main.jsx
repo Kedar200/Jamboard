@@ -8,7 +8,6 @@ const Main = () => {
 
     return (
         <div className="main">
-            <Navbar />
             <div className="content">
                 <Toolbar setCursor={setCursor} />
                 <div className="canvas-container">
