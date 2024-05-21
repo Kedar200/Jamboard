@@ -26,3 +26,16 @@
     border: 2px solid #dadce0;
     background-color: #fff;
 }
+
+.custom-cursor {
+    width: 10px;
+    height: 10px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 50%;
+    border: 1px solid black;
+    position: absolute;
+    pointer-events: none;
+    transition: top 0.05s ease, left 0.05s ease;
+    z-index: 12;
+    display: none;
+}

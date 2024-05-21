@@ -4,14 +4,14 @@ import Canvas from './Canvas.jsx';
 import './Main.css';
 
 const Main = () => {
-    const [cursor, setCursor] = useState('default');
+    const [selectedTool, setSelectedTool] = useState("pointer");
 
     return (
         <div className="main">
             <div className="content">
-                <Toolbar setCursor={setCursor} />
+            <Toolbar setSelectedTool={setSelectedTool} selectedTool={selectedTool} />
                 <div className="canvas-container">
-                    <Canvas cursor={cursor} />
+                <Canvas setSelectedTool={setSelectedTool} selectedTool={selectedTool} />
                 </div>
             </div>
         </div>
