@@ -5,17 +5,17 @@ wss.on('connection', (ws) => {
     console.log('Client connected');
 
     ws.on('message', (message) => {
-        console.log('Received:', message);
         try {
             const parsedMessage = JSON.parse(message);
-            if (parsedMessage.type === 'drawing') {
-                // Broadcast drawing data to all connected clients
-                wss.clients.forEach((client) => {
-                    if (client !== ws && client.readyState === WebSocket.OPEN) {
-                        client.send(message);
-                    }
-                });
-            }
+
+            // Broadcast drawing data to all connected clients
+            wss.clients.forEach((client) => {
+                if (client !== ws && client.readyState === WebSocket.OPEN) {
+                    client.send(message);
+                }
+            });
+            console.log('Received:', message);
+
         } catch (e) {
             console.error('Error parsing message:', e);
         }
