@@ -1,0 +1,9 @@
+.jams-container {
+    margin: 20px;
+  }
+  
+  .jams-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }

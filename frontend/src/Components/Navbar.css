@@ -1,24 +1,94 @@
 .navbar {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    background-color: #ffffff;
-    color: #000000;
-    padding: 20px 30px;
-    font-size: 1.5rem;
-}
-
-.navbar-logo {
+    background-color: #333333;
+    color: #ffffff;
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+  
+  .navbar-left {
     display: flex;
     align-items: center;
-}
-
-.navbar-logo-image {
+  }
+  
+  .navbar-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #ffffff;
+    margin-right: 20px;
+  }
+  
+  .navbar-logo-image {
     width: 50px;
-    margin-right: 10px; 
-}
-
-.navbar-date {
-    font-size: 1.5rem;
-    opacity: 0.7; 
-}
+    margin-right: 10px;
+  }
+  
+  .navbar-title-input {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    background-color: #e6e6e6;
+    color: #333333;
+  }
+  
+  .navbar-actions {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+  }
+  
+  .user-icon-container {
+    position: relative;
+    margin-left: auto;
+    cursor: pointer;
+  }
+  
+  .user-icon {
+    width: 50px;
+    height: auto;
+    margin-left: 10px;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .user-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    display: none;
+    z-index: 1;
+    font-size: 0.9rem;
+    min-width: 160px;
+  }
+  
+  .user-icon-container:hover .user-dropdown {
+    display: block;
+  }
+  
+  .user-dropdown button {
+    display: block;
+    text-decoration: none;
+    color: #333333;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: 500;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .user-dropdown button:hover {
+    background-color: #0056b3;
+  }
