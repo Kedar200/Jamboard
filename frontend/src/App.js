@@ -4,29 +4,29 @@ import './App.css';
 import Home from './Components/Home/Home.jsx';
 import Navbar from './Components/Navbar.jsx';
 import Jamboard from './Components/Home/Jamboard.jsx';
-import Main from './Components/Main/Main.jsx';
 import Login from './Components/Auth/Login.jsx';
 import Signup from './Components/Auth/Signup.jsx';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if the user is already authenticated (e.g., from localStorage)
-    const isUserAuthenticated = localStorage.getItem('isAuthenticated');
-    setIsAuthenticated(true);
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsAuthenticated(true);
+    }
     setIsLoading(false);
   }, []);
 
   const handleLogin = () => {
     setIsAuthenticated(true);
-    localStorage.setItem('isAuthenticated', 'true');
+    window.location.href = '/';    
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('token');
   };
 
   if (isLoading) {
@@ -39,9 +39,8 @@ function App() {
       <Routes>
         <Route path="/" element={isAuthenticated ? <Home /> : <Navigate to="/login" />} />
         <Route path="/jamboard/:id" element={isAuthenticated ? <Jamboard /> : <Navigate to="/login" />} />
-        {/* <Route path="/Main/" element={isAuthenticated ? <Main /> : <Navigate to="/login" />} /> */}
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/signup" element={<Signup onSignup={handleLogin} />} />
       </Routes>
     </Router>
   );

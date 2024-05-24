@@ -5,6 +5,7 @@ import './Login.css';
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -14,10 +15,27 @@ const Login = ({ onLogin }) => {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Call the onLogin function with email and password
-    onLogin(email, password);
+    try {
+      const response = await fetch('http://localhost:4000/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem('token', data.token);
+        console.log(data.token);
+        onLogin();
+      } else {
+        setError(data.message);
+      }
+    } catch (error) {
+      setError('Login failed. Please try again.');
+    }
   };
 
   return (
@@ -45,6 +63,7 @@ const Login = ({ onLogin }) => {
               required
             />
           </div>
+          {error && <div className="error-message">{error}</div>}
           <button type="submit" className="login-btn">
             Login
           </button>

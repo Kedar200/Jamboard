@@ -6,6 +6,7 @@ const Signup = ({ onSignup }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -23,10 +24,30 @@ const Signup = ({ onSignup }) => {
     setConfirmPassword(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Call the onSignup function with name, email, password, and confirmPassword
-    onSignup(name, email, password, confirmPassword);
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+    try {
+      const response = await fetch('http://localhost:4000/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem('token', data.token);
+        onSignup();
+      } else {
+        setError(data.message);
+      }
+    } catch (error) {
+      setError('Signup failed. Please try again.');
+    }
   };
 
   return (
@@ -74,6 +95,7 @@ const Signup = ({ onSignup }) => {
               required
             />
           </div>
+          {error && <div className="error-message">{error}</div>}
           <button type="submit" className="signup-btn">
             Sign Up
           </button>

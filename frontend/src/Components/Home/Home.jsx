@@ -6,8 +6,24 @@ import './Home.css';
 function Home() {
   const navigate = useNavigate();
 
-  const handleAddJam = () => {
-    navigate('/Main');
+  const handleAddJam = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:4000/canvas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create jamboard');
+      }
+      window.location.reload();
+    } catch (error) {
+      console.error('Error creating jamboard:', error);
+    }
   };
 
   return (
