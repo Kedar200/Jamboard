@@ -1,45 +1,44 @@
 const CanvasModel = require('../models/CanvasModel');
 const jwtUtils = require('../utils/jwtUtils');
 
-const createCanvas = async (req, res) => {
+const createCanvas = async(req, res) => {
     try {
         const userId = req.userData.userId;
-        const canvas = await CanvasModel.create({createdBy: userId, viewAccess: [userId], editAccess: [userId] });
-        res.status(201).json({canvas});
-    }
-    catch (error) {
+        const canvas = await CanvasModel.create({ createdBy: userId, viewAccess: [userId], editAccess: [userId] });
+        res.status(201).json({ canvas });
+    } catch (error) {
         res.status(400).json({ message: 'Invalid data' });
     }
 }
 
-const getAllCanvas = async (req, res) => {
+const getAllCanvas = async(req, res) => {
     try {
         const userId = req.userData.userId;
         const canvases = await CanvasModel.find({ $or: [{ createdBy: userId }, { viewAccess: userId }, { editAccess: userId }] }).populate('createdBy');
         res.status(200).json({ canvases });
-    }
-    catch (error) {
+    } catch (error) {
         res.status(400).json({ message: 'Invalid data' });
     }
 }
 
-const getCanvas = async (req, res) => {
+const getCanvas = async(req, res) => {
     try {
         const userId = req.userData.userId;
-        const canvasId = req.params;
+
+        const canvasId = req.params.code;
+        console.log(canvasId)
         const canvas = await CanvasModel.findOne({ _id: canvasId, $or: [{ createdBy: userId }, { viewAccess: userId }, { editAccess: userId }] }).populate('createdBy');
         if (!canvas) {
             res.status(404).json({ message: 'Canvas not found' });
             return;
         }
         res.status(200).json({ canvas });
-    }
-    catch (error) {
+    } catch (error) {
         res.status(400).json({ message: 'Invalid data' });
     }
 }
 
-const updateAccess = async (req, res) => {
+const updateAccess = async(req, res) => {
     try {
         const userId = req.userData.userId;
         const { code } = req.params;
@@ -61,13 +60,12 @@ const updateAccess = async (req, res) => {
         }
         await canvas.save();
         res.status(200).json({ canvas });
-    }
-    catch (error) {
+    } catch (error) {
         res.status(400).json({ message: 'Invalid data' });
     }
 }
 
-const deleteCanvas = async (req, res) => {
+const deleteCanvas = async(req, res) => {
     try {
         const userId = req.userData.userId;
         const { code } = req.params;
@@ -78,11 +76,31 @@ const deleteCanvas = async (req, res) => {
         }
         await canvas.delete();
         res.status(200).json({ message: 'Canvas deleted' });
+    } catch (error) {
+        res.status(400).json({ message: 'Invalid data' });
     }
-    catch (error) {
+}
+
+const updateCanvas = async(req, res) => {
+    try {
+        const userId = req.userData.userId;
+        const { code } = req.params;
+        console.log(code)
+        const { drawing } = req.body;
+        const canvas = await CanvasModel.findOne({ _id: code, $or: [{ createdBy: userId }, { viewAccess: userId }, { editAccess: userId }] }).populate('createdBy');
+
+        if (!canvas) {
+            res.status(404).json({ message: 'Canvas not found' });
+            return;
+        }
+        canvas.drawing = drawing;
+        await canvas.save()
+        res.status(200).json({ message: 'Canvas Updated' });
+    } catch (error) {
         res.status(400).json({ message: 'Invalid data' });
     }
 }
 
 
-module.exports = { createCanvas, getAllCanvas, getCanvas, updateAccess, deleteCanvas};
+
+module.exports = { createCanvas, getAllCanvas, getCanvas, updateAccess, deleteCanvas, updateCanvas };

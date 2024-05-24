@@ -1,7 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import './Canvas.css';
+import { useLocation } from 'react-router-dom';
 
-const Canvas = ({url, selectedTool, setSelectedTool }) => {
+const Canvas = ({selectedTool, setSelectedTool }) => {
     const getCursorStyle = () => {
         switch (selectedTool) {
             case 'pencil':
@@ -16,7 +17,7 @@ const Canvas = ({url, selectedTool, setSelectedTool }) => {
                 return 'default';
         }
     };
-
+    const {state}=useLocation();
     const canvasRef = useRef(null);
     const [isDrawing, setIsDrawing] = useState(false);
     const [points, setPoints] = useState([]);
@@ -41,7 +42,7 @@ const Canvas = ({url, selectedTool, setSelectedTool }) => {
             const context = canvas.getContext('2d');
         
             const image = new Image();
-            image.src = url; // The data URL passed as a prop
+            image.src = state.drawing; // The data URL passed as a prop
             image.onload = () => {
                 context.drawImage(image, 0, 0, canvas.width, canvas.height);
             };
@@ -49,13 +50,13 @@ const Canvas = ({url, selectedTool, setSelectedTool }) => {
             image.onerror = (err) => {
                 console.error('Failed to load the image:', err);
             };
-        }, [url]);
+        }, []);
     const initializeWebSocket = () => {
         if (socket.current && socket.current.readyState !== WebSocket.CLOSED) {
             return;
         }
 
-        socket.current = new WebSocket('wss://jamboard.onrender.com');
+        socket.current = new WebSocket('ws://localhost:5000');
 
         socket.current.onopen = () => {
             console.log('Connected to WebSocket server');
@@ -148,6 +149,30 @@ const Canvas = ({url, selectedTool, setSelectedTool }) => {
         };
     }, []);
 
+    const handleUpdateJamState = async (updatedCanvasData) => {
+        try {
+          state.drawing=updatedCanvasData.drawing;
+
+          const token = localStorage.getItem('token');
+          const code = state._id;
+          const response = await fetch(`http://localhost:4000/canvas/update/${code}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(updatedCanvasData)
+          });
+      
+          if (!response.ok) {
+            throw new Error('Failed to update jamboard');
+          }
+        } catch (error) {
+          console.error('Error updating jamboard:', error);
+        }
+      };
+      
+
     useEffect(() => {
         const canvas = canvasRef.current;
 
@@ -188,6 +213,11 @@ const Canvas = ({url, selectedTool, setSelectedTool }) => {
             if (!isDrawing) return;
             context.closePath();
             setIsDrawing(false);
+            const data = canvasRef.current.toDataURL();
+            const updatedCanvasData = {
+                drawing: data,
+                };
+            handleUpdateJamState( updatedCanvasData)
         };
 
         canvas.addEventListener('mousedown', startDrawing);
@@ -262,10 +292,24 @@ const Canvas = ({url, selectedTool, setSelectedTool }) => {
             canvas.removeEventListener('mouseout', hideCursor);
         };
     }, [selectedTool]);
-
+    const clearBoard = async () => {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
+    
+        // Clear the canvas
+        context.clearRect(0, 0, canvas.width, canvas.height);
+    
+        const data = canvasRef.current.toDataURL();
+        const updatedCanvasData = {
+            drawing: data,
+            };
+        handleUpdateJamState( updatedCanvasData)
+      };
+    
     return (
         <>
-            <div className="user-count">{`Users Connected: ${userCount}`}</div>
+              <button onClick={clearBoard}>Clear Board</button> {/* Add this button */}
+
             <canvas
                 ref={canvasRef}
                 width={1000}

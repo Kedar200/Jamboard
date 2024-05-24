@@ -2,6 +2,7 @@ const WebSocket = require('ws');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const UserRoutes = require('./routes/UserRoutes');
 const CanvasRoutes = require('./routes/CanvasRoutes');
@@ -22,7 +23,6 @@ wss.on('connection', (ws) => {
                     client.send(message);
                 }
             });
-            console.log('Received:', message);
 
         } catch (e) {
             console.error('Error parsing message:', e);
@@ -41,8 +41,12 @@ wss.on('connection', (ws) => {
 console.log('WebSocket server is running on ws://localhost:5000');
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
 app.use('/auth', UserRoutes);
 app.use('/canvas', CanvasRoutes);
 
@@ -54,5 +58,4 @@ const mongoURL = 'mongodb+srv://jamboard:jamboard@jamboard.hg47v2o.mongodb.net/?
 mongoose.connect(mongoURL)
     .then(() => console.log('connected to mongodb'))
     .catch((err) =>
-    console.log('error connecting to mongodb', err))
-
+        console.log('error connecting to mongodb', err))

@@ -12,7 +12,7 @@ function JamCard({ canvas }) {
   return (
     <div className="jam-card" onClick={handleJamClick}>
       <div className="jam-drawing">
-        <img src={canvas.background} alt="Drawing" />
+        <img src={canvas.drawing} alt="Drawing" />
       </div>
       <div className="jam-info">
         <h3>{canvas._id}</h3>

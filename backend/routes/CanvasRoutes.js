@@ -10,5 +10,6 @@ router.post('/', authMiddleware, CanvasController.createCanvas);
 router.put('/access/:code', authMiddleware, CanvasController.updateAccess);
 
 router.delete('/:code', authMiddleware, CanvasController.deleteCanvas);
+router.put('/update/:code', authMiddleware, CanvasController.updateCanvas)
 
 module.exports = router;

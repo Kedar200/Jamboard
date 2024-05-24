@@ -22,7 +22,7 @@ function Jamboard() {
           <div>
             <img src={jam.drawing} alt="Drawing" />
           </div> */}
-          <Main drawinglayer={jam.drawing}/>
+          <Main drawinglayer={state}/>
         </>
       )}
     </div>
