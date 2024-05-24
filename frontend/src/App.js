@@ -15,7 +15,7 @@ function App() {
   useEffect(() => {
     // Check if the user is already authenticated (e.g., from localStorage)
     const isUserAuthenticated = localStorage.getItem('isAuthenticated');
-    setIsAuthenticated(isUserAuthenticated === 'true');
+    setIsAuthenticated(true);
     setIsLoading(false);
   }, []);
 
@@ -39,7 +39,7 @@ function App() {
       <Routes>
         <Route path="/" element={isAuthenticated ? <Home /> : <Navigate to="/login" />} />
         <Route path="/jamboard/:id" element={isAuthenticated ? <Jamboard /> : <Navigate to="/login" />} />
-        <Route path="/Main" element={isAuthenticated ? <Main /> : <Navigate to="/login" />} />
+        {/* <Route path="/Main/" element={isAuthenticated ? <Main /> : <Navigate to="/login" />} /> */}
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/signup" element={<Signup />} />
       </Routes>

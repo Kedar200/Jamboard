@@ -1,18 +1,18 @@
 import React from 'react';
 import { useParams, useLocation } from 'react-router-dom';
+import Main from '../Main/Main';
 
 function Jamboard() {
   const { id } = useParams();
   const { state } = useLocation();
   const jam = state;
-
   return (
     <div>
-      <h1>Jamboard</h1>
-      <p>Jamboard ID: {id}</p>
+      {/* <h1>Jamboard</h1>
+      <p>Jamboard ID: {id}</p> */}
       {jam && (
         <>
-          <h2>{jam.title}</h2>
+          {/* <h2>{jam.title}</h2>
           <p>
             <strong>Created Date:</strong> {jam.date}
           </p>
@@ -21,7 +21,8 @@ function Jamboard() {
           </p>
           <div>
             <img src={jam.drawing} alt="Drawing" />
-          </div>
+          </div> */}
+          <Main drawinglayer={jam.drawing}/>
         </>
       )}
     </div>
