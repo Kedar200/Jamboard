@@ -57,7 +57,7 @@ const Canvas = ({canvasdata ,selectedTool, setSelectedTool }) => {
             return;
         }
 
-        socket.current = new WebSocket('ws://localhost:5000');
+        socket.current = new WebSocket('wss://jamboard.onrender.com');
 
         socket.current.onopen = () => {
             console.log('Connected to WebSocket server');
@@ -156,7 +156,7 @@ const Canvas = ({canvasdata ,selectedTool, setSelectedTool }) => {
 
           const token = localStorage.getItem('token');
           const code = canvasdata._id;
-          const response = await fetch(`http://localhost:4000/canvas/update/${code}`, {
+          const response = await fetch(`https://jamboard.onrender.com/canvas/update/${code}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',

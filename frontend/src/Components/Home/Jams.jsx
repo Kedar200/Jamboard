@@ -10,7 +10,7 @@ function Jams() {
     const fetchCanvases = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:4000/canvas', {
+        const response = await fetch('https://jamboard.onrender.com/canvas', {
           headers: {
             Authorization: `Bearer ${token}`
           }

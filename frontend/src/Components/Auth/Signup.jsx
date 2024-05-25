@@ -31,7 +31,7 @@ const Signup = ({ onSignup }) => {
       return;
     }
     try {
-      const response = await fetch('http://localhost:4000/auth/signup', {
+      const response = await fetch('https://jamboard.onrender.com/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
