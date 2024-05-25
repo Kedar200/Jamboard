@@ -9,8 +9,18 @@ const CanvasRoutes = require('./routes/CanvasRoutes');
 
 // Express Server
 const app = express();
+const corsOptions = {
+    origin: '*',
+    methods: '*',
+    allowedHeaders: 'Origin,X-Requested-With,Content-Type,Accept,Authorization',
+    credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+};
 
-app.use(cors());
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
 app.use(express.json({ limit: '50mb' }));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
