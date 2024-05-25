@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import './Canvas.css';
 import { useLocation } from 'react-router-dom';
 
-const Canvas = ({selectedTool, setSelectedTool }) => {
+const Canvas = ({canvasdata ,selectedTool, setSelectedTool }) => {
     const getCursorStyle = () => {
         switch (selectedTool) {
             case 'pencil':
@@ -17,7 +17,6 @@ const Canvas = ({selectedTool, setSelectedTool }) => {
                 return 'default';
         }
     };
-    const {state}=useLocation();
     const canvasRef = useRef(null);
     const [isDrawing, setIsDrawing] = useState(false);
     const [points, setPoints] = useState([]);
@@ -37,12 +36,14 @@ const Canvas = ({selectedTool, setSelectedTool }) => {
         console.log('User count updated:', userCount);
     }, [userCount]);
 
+
+
         useEffect(() => {
             const canvas = canvasRef.current;
             const context = canvas.getContext('2d');
         
             const image = new Image();
-            image.src = state.drawing; // The data URL passed as a prop
+            image.src = canvasdata.drawing; // The data URL passed as a prop
             image.onload = () => {
                 context.drawImage(image, 0, 0, canvas.width, canvas.height);
             };
@@ -89,10 +90,10 @@ const Canvas = ({selectedTool, setSelectedTool }) => {
             setTimeout(initializeWebSocket, delay);
         
             // Remove disconnected user's data
-            // const disconnectedUserId = event.reason; // Assuming the server sends the user ID in the reason field
-            // setUsers(prevUsers => prevUsers.filter(user => user.name !== disconnectedUserId));
-            // setUserCount(prevCount => prevCount - 1);
-            // delete drawingContexts.current[disconnectedUserId];
+            const disconnectedUserId = event.reason; // Assuming the server sends the user ID in the reason field
+            setUsers(prevUsers => prevUsers.filter(user => user.name !== disconnectedUserId));
+            setUserCount(prevCount => prevCount - 1);
+            delete drawingContexts.current[disconnectedUserId];
         };
 
         socket.current.onerror = (error) => {
@@ -151,10 +152,10 @@ const Canvas = ({selectedTool, setSelectedTool }) => {
 
     const handleUpdateJamState = async (updatedCanvasData) => {
         try {
-          state.drawing=updatedCanvasData.drawing;
+            canvasdata.drawing=updatedCanvasData.drawing;
 
           const token = localStorage.getItem('token');
-          const code = state._id;
+          const code = canvasdata._id;
           const response = await fetch(`http://localhost:4000/canvas/update/${code}`, {
             method: 'PUT',
             headers: {
@@ -309,18 +310,21 @@ const Canvas = ({selectedTool, setSelectedTool }) => {
     return (
         <>
               <button onClick={clearBoard}>Clear Board</button> {/* Add this button */}
+{
 
             <canvas
-                ref={canvasRef}
-                width={1000}
-                height={600}
-                className="canvas"
-                Style={{ cursor: getCursorStyle() }}
-            />
+            ref={canvasRef}
+            width={1000}
+            height={600}
+            className="canvas"
+            Style={{ 
+                cursor: getCursorStyle(),
+                pointerEvents: isWebSocketOpen ? 'auto' : 'none',
+                opacity: isWebSocketOpen ? 1 : 0.5
+              }}/>
+        }
             <div ref={cursorRef} className="custom-cursor" />
-            {/* {users.map(user => (
-                <div key={user.name} className="user-cursor" style={{ left:` ${user.cursor.x}px`, top: `${user.cursor.y}px`, backgroundColor: user.color }} />
-            ))} */}
+           
 
         </>
     );

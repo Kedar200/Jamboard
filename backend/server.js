@@ -14,9 +14,9 @@ wss.on('connection', (ws) => {
     console.log('Client connected');
 
     ws.on('message', (message) => {
+        console.log(wss.clients)
         try {
             const parsedMessage = JSON.parse(message);
-
             // Broadcast drawing data to all connected clients
             wss.clients.forEach((client) => {
                 if (client !== ws && client.readyState === WebSocket.OPEN) {
