@@ -4,12 +4,11 @@ import Jams from './Jams';
 import './Home.css';
 
 function Home() {
-  const navigate = useNavigate();
 
   const handleAddJam = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:4000/canvas', {
+      const response = await fetch('https://jamboard.onrender.com/canvas', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

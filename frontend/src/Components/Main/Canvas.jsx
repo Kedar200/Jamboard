@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import './Canvas.css';
 import { useLocation } from 'react-router-dom';
 
-const Canvas = ({canvasdata ,selectedTool, setSelectedTool }) => {
+const Canvas = ({canvasdata ,selectedTool }) => {
     const getCursorStyle = () => {
         switch (selectedTool) {
             case 'pencil':
@@ -178,7 +178,7 @@ const Canvas = ({canvasdata ,selectedTool, setSelectedTool }) => {
         const canvas = canvasRef.current;
 
         const context = canvas.getContext('2d');
-        context.lineWidth = selectedTool === 'eraser' ? 10 : 1;
+        context.lineWidth = selectedTool === 'eraser' ? 20 : 1;
         context.lineCap = 'round';
         context.strokeStyle = selectedTool === 'eraser' ? 'white' : 'black';
 
@@ -234,15 +234,6 @@ const Canvas = ({canvasdata ,selectedTool, setSelectedTool }) => {
         };
     }, [isDrawing]);
 
-    // const sendDrawingData = (points) => {
-    //     const message = JSON.stringify({ type: 'drawing', points, selectedTool });
-    //     if (isWebSocketOpen && socket.current && socket.current.readyState === WebSocket.OPEN) {
-    //         socket.current.send(message);
-    //     } else {
-    //         pendingMessages.current.push(message);
-    //     }
-    // };
-
     const drawFromData = (context, points, tool) => {
         context.beginPath();
         context.moveTo(points[0].x, points[0].y);
@@ -267,8 +258,8 @@ const Canvas = ({canvasdata ,selectedTool, setSelectedTool }) => {
         if (cursorRef.current && selectedTool === 'eraser') {
             const { clientX, clientY } = event;
             requestAnimationFrame(() => {
-                cursorRef.current.style.left = `${clientX - 5}px`;
-                cursorRef.current.style.top = `${clientY - 5}px`;
+                cursorRef.current.style.left = `${clientX - 10}px`;
+                cursorRef.current.style.top = `${clientY - 10}px`;
                 cursorRef.current.style.display = 'block';
             });
         } else if (cursorRef.current) {
@@ -314,14 +305,13 @@ const Canvas = ({canvasdata ,selectedTool, setSelectedTool }) => {
 
             <canvas
             ref={canvasRef}
-            width={1000}
-            height={600}
+            width={1024}
+            height={720}
             className="canvas"
-            Style={{ 
+            style={{ 
                 cursor: getCursorStyle(),
                 pointerEvents: isWebSocketOpen ? 'auto' : 'none',
-                opacity: isWebSocketOpen ? 1 : 0.5
-              }}/>
+                }}/>
         }
             <div ref={cursorRef} className="custom-cursor" />
            
