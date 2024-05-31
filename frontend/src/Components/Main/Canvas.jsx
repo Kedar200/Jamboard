@@ -300,7 +300,7 @@ const Canvas = ({canvasdata ,selectedTool }) => {
     
     return (
         <>
-              <button onClick={clearBoard}>Clear Board</button> {/* Add this button */}
+              <button onClick={clearBoard}>Clear Board</button>
 {
 
             <canvas
