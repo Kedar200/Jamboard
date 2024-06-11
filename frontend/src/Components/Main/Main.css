@@ -25,9 +25,13 @@ body {
     justify-content: center;
     align-items: center;
     padding: 20px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 .canvas {
+    position: absolute;
     border: 2px solid #dadce0;
     background-color: #fff;
 }
@@ -42,5 +46,4 @@ body {
     pointer-events: none;
     transition: top 0.05s ease, left 0.05s ease;
     z-index: 12;
-    display: none;
 }

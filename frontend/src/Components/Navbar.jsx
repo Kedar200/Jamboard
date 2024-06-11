@@ -5,6 +5,8 @@ import './Navbar.css';
 import logo from './Logo.png';
 import userIcon from './userIcon.jpg';
 
+
+
 const Navbar = ({ isAuthenticated, onLogout }) => {
   const [jamTitle, setJamTitle] = useState("Untitled Jamboard");
   const [newJamTitle, setNewJamTitle] = useState(jamTitle);

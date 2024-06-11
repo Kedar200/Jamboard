@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import './Canvas.css';
-import { useLocation } from 'react-router-dom';
+import { handleDrawingData, handleUserData, sendWebSocketMessage } from '../../utils/helper';
 
 const Canvas = ({canvasdata ,selectedTool }) => {
     const getCursorStyle = () => {
@@ -32,6 +32,11 @@ const Canvas = ({canvasdata ,selectedTool }) => {
         console.log('Users state updated:', users);
     }, [users]);
 
+
+    useEffect(() => {
+        console.log('User count updated:', userCount);
+    }, [userCount]);
+    
     useEffect(() => {
         console.log('User count updated:', userCount);
     }, [userCount]);
@@ -52,19 +57,20 @@ const Canvas = ({canvasdata ,selectedTool }) => {
                 console.error('Failed to load the image:', err);
             };
         }, []);
+
     const initializeWebSocket = () => {
         if (socket.current && socket.current.readyState !== WebSocket.CLOSED) {
             return;
         }
 
-        socket.current = new WebSocket('wss://jamboard.onrender.com');
+        socket.current = new WebSocket('ws://localhost:4000');
 
         socket.current.onopen = () => {
             console.log('Connected to WebSocket server');
             setIsWebSocketOpen(true);
-
-            const message = JSON.stringify({ type: 'user_data', name:"Kedar" });
-            socket.current.send(message)
+            const userData = { name: "Kedar" };
+            const message = { type: "user_data", data: userData };
+            sendWebSocketMessage(socket.current, message);
             
         };
         
@@ -73,14 +79,15 @@ const Canvas = ({canvasdata ,selectedTool }) => {
                 const data = event.data instanceof Blob ? await event.data.text() : event.data;
                 const message = JSON.parse(data);
                 if (message.type === 'user_data') {
-                    handleUserData(message)
+                    handleUserData(message, canvasRef, drawingContexts, setUsers, setUserCount);
                 } else if (message.type === 'drawing') {
-                    handleDrawingData(message)
+                    handleDrawingData(message, canvasRef, drawingContexts);
                 }
             } catch (e) {
                 console.error('Error parsing WebSocket message:', e);
             }
         };
+        
 
         socket.current.onclose = (event) => {
             console.log(`WebSocket closed: ${event.code} ${event.reason}`);
@@ -102,44 +109,30 @@ const Canvas = ({canvasdata ,selectedTool }) => {
         };
     };
 
-    const handleUserData = (message) => {
-        console.log('Received user data:', message);
-        setUsers((prevUsers) => {
-            const existingUser = prevUsers.find(user => user.name === message.name);
-            if (existingUser) {
-                return prevUsers;
-            } else {
-                const offscreenCanvas = document.createElement('canvas');
-                offscreenCanvas.width = canvasRef.current.width;
-                offscreenCanvas.height = canvasRef.current.height;
-                drawingContexts.current[message.name] = offscreenCanvas.getContext('2d');
-                setUserCount(prevCount => prevCount + 1);
-                return [...prevUsers, { name: message.name, cursor: message.cursor || 'default', color: message.color || 'black' }];
-            }
-        });
-    };
 
+    // const handleDrawingData = (message) => {
+    //     const { userData, points, selectedTool } = message;
+    //     if (!userData || !userData.name) {
+    //         console.error('Invalid drawing message:', message);
+    //         return;
+    //     }
 
-    const handleDrawingData = (message) => {
-        const { userData, points, selectedTool } = message;
-        if (!userData || !userData.name) {
-            console.error('Invalid drawing message:', message);
-            return;
-        }
+    //     const context = drawingContexts.current[userData.name];
+    //     if (!context) {
+    //         console.error('No drawing context found for user:', userData.name);
+    //         const offscreenCanvas = document.createElement('canvas');
+    //         offscreenCanvas.width = canvasRef.current.width;
+    //         offscreenCanvas.height = canvasRef.current.height;
+    //         drawingContexts.current[message.name] = offscreenCanvas.getContext('2d');
+    //     }
+    //     else{
+    //         console.log("exists a context")
+    //     }
 
-        const context = drawingContexts.current[userData.name];
-        if (!context) {
-            console.error('No drawing context found for user:', userData.name);
-            return;
-        }
-        else{
-            console.log("exists a context")
-        }
-
-        drawFromData(context, points, selectedTool);
-        const mainContext = canvasRef.current.getContext('2d');
-        mainContext.drawImage(drawingContexts.current[userData.name].canvas, 0, 0);
-    };
+    //     drawFromData(context, points, selectedTool);
+    //     const mainContext = canvasRef.current.getContext('2d');
+    //     mainContext.drawImage(drawingContexts.current[userData.name].canvas, 0, 0);
+    // };
     useEffect(() => {
         initializeWebSocket();
 
@@ -199,13 +192,9 @@ const Canvas = ({canvasdata ,selectedTool }) => {
             context.stroke();
             setPoints(prevPoints => {
                 const newPoints = [...prevPoints, { x: offsetX, y: offsetY }];
-                const message = JSON.stringify({
-                    type: 'drawing',
-                    userData: { name: "Kedar", cursor: { x: offsetX, y: offsetY } },
-                    points: newPoints,
-                    selectedTool
-                });
-                socket.current.send(message);
+                const userData = { name: "Kedar", cursor: { x: offsetX, y: offsetY } };
+                sendWebSocketMessage(socket.current, 'drawing', userData, { points: newPoints, selectedTool });
+
                 return newPoints;
             });
         };
@@ -296,11 +285,11 @@ const Canvas = ({canvasdata ,selectedTool }) => {
             drawing: data,
             };
         handleUpdateJamState( updatedCanvasData)
-      };
+    };
     
     return (
         <>
-              <button onClick={clearBoard}>Clear Board</button>
+              {/* <button onClick={clearBoard}>Clear Board</button> */}
 {
 
             <canvas

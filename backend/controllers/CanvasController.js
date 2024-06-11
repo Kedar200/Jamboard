@@ -26,7 +26,6 @@ const getCanvas = async(req, res) => {
         const userId = req.userData.userId;
 
         const canvasId = req.params.code;
-        console.log(canvasId)
         const canvas = await CanvasModel.findOne({ _id: canvasId, $or: [{ createdBy: userId }, { viewAccess: userId }, { editAccess: userId }] }).populate('createdBy');
         if (!canvas) {
             res.status(404).json({ message: 'Canvas not found' });

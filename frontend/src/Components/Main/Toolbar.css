@@ -4,11 +4,12 @@
     left: 12px;
     width: 48px;
     transform: translateY(-50%) translateY(54px);
-    display: flex;
-    flex-direction: column;
+    display: block;
     background-color: #fff;
     border: 1px solid #dadce0;
     border-radius: 24px;
+    z-index: 100;
+    zoom: 1;
 }
 
 .toolbar-button {
@@ -39,4 +40,18 @@
 
 .selected:hover {
     background-color: #4a5053;
+}
+
+.pen-right-arrow {
+    position: absolute;
+    bottom: 18px;
+    right: 3px;
+    width: 3px;
+    height: 4px;
+    background: no-repeat url(data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjQiIHZpZXdCb3g9IjAgMCAzIDQiIHdpZHRoPSIzIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwb2x5Z29uIGZpbGw9IiM4MDg2OEIiIHBvaW50cz0iNDg4LjI1IDY1Mi43NSA0ODYuMjUgNjU1LjI1IDQ4NC4yNSA2NTIuNzUiIHRyYW5zZm9ybT0icm90YXRlKC05MCAtODIuMjUgNTcwLjUpIi8+PC9zdmc+);
+    display: block;
+    -webkit-transform: scale(1.4);
+    -ms-transform: scale(1.4);
+    -o-transform: scale(1.4);
+    transform: scale(1.4);
 }
